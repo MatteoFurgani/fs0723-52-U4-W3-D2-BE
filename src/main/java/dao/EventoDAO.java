@@ -10,38 +10,30 @@ public class EventoDAO {
     private final EntityManager em;
 
     public EventoDAO(EntityManager em) {
-
         this.em = em;
     }
 
     public void save(Evento evento) {
         EntityTransaction transaction = em.getTransaction();
         transaction.begin();
-        em.merge(evento); // Utilizza merge invece di persist
+        em.merge(evento);
         transaction.commit();
         System.out.println("Evento " + evento.getId() + " salvato con successo");
     }
 
-
-    public Evento findById(long id) {
-        Evento evento = em.find(Evento.class, id);
-        if (evento == null) throw new NotFoundException(id);
+    public Evento findById(long evento_id) {
+        Evento evento = em.find(Evento.class, evento_id);
+        if (evento == null) throw new NotFoundException(evento_id);
         return evento;
     }
 
-    public void findByIdAndDelete(long id) {
-
-        Evento found = this.findById(id);
-
+    public void findByIdAndDelete(long evento_id) {
+        Evento found = this.findById(evento_id);
         EntityTransaction transaction = em.getTransaction();
-
         transaction.begin();
-
         em.remove(found);
-
         transaction.commit();
-        System.out.println("Evento" + found.getId() + "eliminato con successo");
+        System.out.println("Evento " + found.getId() + " eliminato con successo");
     }
-
-
 }
+

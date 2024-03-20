@@ -2,6 +2,9 @@ package entities;
 
 import jakarta.persistence.*;
 
+
+import java.util.List;
+
 @Entity
 @Table(name = "evento")
 public class Evento {
@@ -9,30 +12,40 @@ public class Evento {
     @Id
     @GeneratedValue
     private long id;
+
     @Column(name = "titolo")
     private String titolo;
+
     @Column(name = "data_evento")
     private int dataEvento;
+
     @Column(name = "tipo_evento")
     @Enumerated(EnumType.STRING)
     private TipoEvento tipoEvento;
+
     @Column(name = "numero_massimo_partecipanti")
     private int numeroMassimoPartecipanti;
 
-    public Evento(){
+    @OneToMany(mappedBy = "evento")
+    private List<Partecipazione> partecipazioni;
 
-    }
 
-    public Evento(long id, String titolo, int dataEvento, TipoEvento tipoEvento, int numeroMassimoPartecipanti){
-        this.id = id;
+    public Evento() {}
+
+    public Evento(String titolo, int dataEvento, TipoEvento tipoEvento, int numeroMassimoPartecipanti) {
         this.titolo = titolo;
         this.dataEvento = dataEvento;
         this.tipoEvento = tipoEvento;
         this.numeroMassimoPartecipanti = numeroMassimoPartecipanti;
     }
 
+
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getTitolo() {
@@ -67,6 +80,15 @@ public class Evento {
         this.numeroMassimoPartecipanti = numeroMassimoPartecipanti;
     }
 
+    public List<Partecipazione> getPartecipazioni() {
+        return partecipazioni;
+    }
+
+    public void setPartecipazioni(List<Partecipazione> partecipazioni) {
+        this.partecipazioni = partecipazioni;
+    }
+
+
     @Override
     public String toString() {
         return "Evento{" +
@@ -78,3 +100,4 @@ public class Evento {
                 '}';
     }
 }
+

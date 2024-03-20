@@ -1,7 +1,9 @@
 
 import dao.EventoDAO;
-import entities.Evento;
-import entities.TipoEvento;
+import dao.PersonaDAO;
+import dao.LocationDAO;
+import dao.PartecipazioneDAO;
+import entities.*;
 import exception.NotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -12,39 +14,44 @@ public class Application {
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("gestioneeventi");
 
     public static void main(String[] args) {
-
         EntityManager em = emf.createEntityManager();
-        EventoDAO ed = new EventoDAO(em);
+        EventoDAO eventoDAO = new EventoDAO(em);
+        PersonaDAO personaDAO = new PersonaDAO(em);
+        LocationDAO locationDAO = new LocationDAO(em);
+        PartecipazioneDAO partecipazioneDAO = new PartecipazioneDAO(em);
+
+        try {
+
+            Persona persona = new Persona("Mario", "Rossi", "mario.rossi@example.com", "1990-01-01", Genere.MASCHIO);
+            personaDAO.save(persona);
 
 
-      /*  Evento evento1 = new Evento(1, "Festa di Natale", 12, TipoEvento.PRIVATO, 100);
-        Evento evento2 = new Evento(2, "Festa di Pasqua", 01, TipoEvento.PRIVATO, 75);
-        Evento evento3 = new Evento(3, "Festa di Capodanno", 31, TipoEvento.PRIVATO, 145); */
+            Location location = new Location("Villa Bella", "Roma");
+            locationDAO.save(location);
 
-      /*  ed.save(evento1);
-        ed.save(evento2);
-        ed.save(evento3); */
+            Evento evento = new Evento("Festa di Compleanno", 2024, TipoEvento.PRIVATO, 50);
+            eventoDAO.save(evento);
 
-        try{
-            Evento evento1 = ed.findById(1);
-            System.out.println(evento1);
-        } catch (NotFoundException e){
-            System.out.println(e.getMessage());
+            Partecipazione partecipazione = new Partecipazione(persona, evento, location, StatoPartecipazione.CONFERMATO);
+            partecipazioneDAO.save(partecipazione);
+        } catch (Exception e) {
+            System.out.println("Errore durante il salvataggio delle entità: " + e.getMessage());
         }
 
-        try{
-            ed.findByIdAndDelete(3);
-        } catch (NotFoundException e){
-            System.out.println(e.getMessage());
+
+        try {
+
+            Evento eventoRecuperato = eventoDAO.findById(1);
+            System.out.println("Evento recuperato: " + eventoRecuperato);
+
+
+            Partecipazione partecipazioneRecuperata = partecipazioneDAO.findById(1);
+            System.out.println("Partecipazione recuperata: " + partecipazioneRecuperata);
+        } catch (NotFoundException e) {
+            System.out.println("Entità non trovata: " + e.getMessage());
         }
-
-
-
-
-
-        System.out.println("Hello World");
 
         em.close();
         emf.close();
-}
+    }
 }
